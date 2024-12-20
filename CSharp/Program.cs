@@ -332,6 +332,7 @@ class Program
         foreach (KeyValuePair<string, int> v in vacations)
             WriteLine($"Department: {v.Key}, Vacations: {v.Value}");
     }
+    // https://uuid7.com/
     static void UUID7()
     {
         //Creates a new Guid according to RFC 9562, following the Version 7 format.
