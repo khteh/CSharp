@@ -9,6 +9,7 @@ using static System.Console;
 //using static System.Diagnostics.Debug;
 // https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-9
 namespace CSharp;
+
 public enum Quadrant
 {
     Unknown,
@@ -48,7 +49,7 @@ class Program
         Debug.Assert(Fibonacci(3) == 2);
         Debug.Assert(Fibonacci(4) == 3);
         Debug.Assert(Fibonacci(5) == 5);
-        literals();
+        TestLiterals();
         long[] array = { 1, 15, -39, 0, 7, 14, -12 };
         ref long place = ref RefReturnsAndLocals(7, array); // aliases 7's place in the array
         place = 9; // replaces 7 with 9 in the array
@@ -73,6 +74,7 @@ class Program
         p.X = 1; p.Y = -1;
         Debug.Assert(SwitchWithPositionalPattern(p) == Quadrant.Four);
         // Indices and Ranges
+        ImplicitIndexOperator();
         string[] indicesAndRange = new string[]
         {
                             // index from start    index from end
@@ -255,12 +257,13 @@ class Program
             return (c + p, c);
         }
     }
-    static void literals()
+    static void TestLiterals()
     {
         long l = 123_456;
-        long hex = 0xAB_CD_EF;
+        long hex = 0xDead_Beef;
         long binary = 0b1010_1011_1100_1101_1110_1111;
-        WriteLine($"l: {l}, hex: {hex}, binary: {binary}");
+        WriteLine($"\n=== {nameof(TestLiterals)} ===");
+        WriteLine($"l: {l}, hex: 0x{hex:X}, binary: {binary:b}");
     }
     static ref long RefReturnsAndLocals(long number, long[] numbers)
     {
@@ -271,6 +274,7 @@ class Program
     }
     static void TestRecords()
     {
+        WriteLine($"\n=== {nameof(TestRecords)} ===");
         StringBuilder sb = new StringBuilder();
         Person person = new Person("Mickey", "Mouse");
         Person person1 = new Person("Mickey", "Mouse");
@@ -295,6 +299,7 @@ class Program
     // https://learn.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting#alignment-component
     static void EnumerableIndex()
     {
+        WriteLine($"\n=== {nameof(EnumerableIndex)} ===");
         foreach (var (month, index) in Months.Index())
             WriteLine($"{index,-5}: {month}");
     }
@@ -322,13 +327,15 @@ class Program
     ];
     static void EnumerableCountBy()
     {
+        WriteLine($"\n=== {nameof(EnumerableCountBy)} ===");
         List<User> users = Users();
         foreach (KeyValuePair<Role, int> role in users.CountBy(u => u.Role))
             WriteLine($"Role {role.Key}: {role.Value}");
     }
     static void AggregateBy()
     {
-        List<KeyValuePair<string, int>> vacations = Employees.AggregateBy(e => e.department, 0, (acc, e) => acc + e.vacationDaysLeft).ToList();
+        WriteLine($"\n=== {nameof(AggregateBy)} ===");
+        List<KeyValuePair<string, int>> vacations = Employees.AggregateBy(e => e.department, 0 /* seed */ , (acc, e) => acc + e.vacationDaysLeft).ToList();
         foreach (KeyValuePair<string, int> v in vacations)
             WriteLine($"Department: {v.Key}, Vacations: {v.Value}");
     }
@@ -339,5 +346,18 @@ class Program
         WriteLine($"UUID7: {Guid.CreateVersion7()}");
         //Creates a new Guid according to RFC 9562, following the Version 7 format with DateTimeOffset
         WriteLine($"UUID7 with DateTimeOffset: {Guid.CreateVersion7(TimeProvider.System.GetUtcNow())}");
+    }
+    static void ImplicitIndexOperator()
+    {
+        WriteLine("\n=== The implicit 'from the end' index operator, '^' ===");
+        int[] buffer = new int[10]; // initialized to 0 by default
+        buffer[^1] = 9;
+        buffer[^3] = 7;
+        buffer[^7] = 3;
+        buffer[^10] = 0;
+        Debug.Assert(buffer[0] == 0);
+        Debug.Assert(buffer[3] == 3);
+        Debug.Assert(buffer[7] == 7);
+        Debug.Assert(buffer[9] == 9);
     }
 }
