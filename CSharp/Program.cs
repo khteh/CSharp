@@ -162,9 +162,7 @@ class Program
         orders.Add(new Order(dto, new PricingDetails(13.00m))); // Sum: 78
         IEnumerable<IGrouping<int, Order>> orders2023 = orders.Where(i => i.Timestamp.Year == DateTimeOffset.Now.Year).GroupBy(i => i.Timestamp.Month);
         IEnumerable<MonthSales> sales2023 = orders.Where(i => i.Timestamp.Year == DateTimeOffset.Now.Year).GroupBy(i => i.Timestamp.Month).Select(group => new MonthSales { Month = group.Key, Sales = group.Sum(y => y.Price.Total) });
-
         IEnumerable<MonthSales> yearlySales = orders.GroupBy(i => i.Timestamp.Year).Select(group => new MonthSales { Month = group.Key, Sales = group.Sum(y => y.Price.Total) }).OrderByDescending(i => i.Month).Take(2);
-
         List<PricingDetails> pricingDetails = new List<PricingDetails>() {
             new PricingDetails(123.456m),
             new PricingDetails(234.567m),
@@ -184,6 +182,30 @@ class Program
         EnumerableCountBy();
         AggregateBy();
         UUID7();
+        Dictionary<int, List<int>> seats = new Dictionary<int, List<int>>();
+        Reservation reservation = NewReservation1($"Hello0123", out seats);
+        WriteLine($"{seats.Count} seats");
+        seats[0].ForEach(i => Write($"{i}, "));
+        WriteLine();
+        WriteLine($"{reservation.Seats.Count} seats");
+        reservation.Seats[0].ForEach(i => Write($"{i}, "));
+        WriteLine();
+
+        seats.Clear();
+        WriteLine($"\nAfter clearing local seats...");
+        Debug.Assert(!seats.Any());
+        Debug.Assert(seats.Count == 0);
+        WriteLine($"{reservation.Seats.Count} seats");
+        reservation.Seats[0].ForEach(i => Write($"{i}, "));
+        WriteLine();
+
+        reservation = NewReservation($"Hello0123");
+        WriteLine($"\nCheck the scope of seats after leaving NewReservation()...");
+        Debug.Assert(reservation.Seats.Any());
+        Debug.Assert(reservation.Seats.Count > 0);
+        WriteLine($"{reservation.Seats.Count} seats");
+        reservation.Seats[0].ForEach(i => Write($"{i}, "));
+        WriteLine();
         WriteLine("Press ENTER to exit:");
         ReadLine();
     }
@@ -359,5 +381,17 @@ class Program
         Debug.Assert(buffer[3] == 3);
         Debug.Assert(buffer[7] == 7);
         Debug.Assert(buffer[9] == 9);
+    }
+    static Reservation NewReservation(string id)
+    {
+        Dictionary<int, List<int>> seats = new Dictionary<int, List<int>>();
+        seats[0] = new List<int>() { 1, 2, 3, 4 };
+        return new Reservation(id, seats);
+    }
+    static Reservation NewReservation1(string id, out Dictionary<int, List<int>> seats)
+    {
+        seats = new Dictionary<int, List<int>>();
+        seats[0] = new List<int>() { 1, 2, 3, 4 };
+        return new Reservation(id, new Dictionary<int, List<int>>(seats));
     }
 }
