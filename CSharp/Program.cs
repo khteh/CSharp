@@ -206,6 +206,12 @@ class Program
         WriteLine($"{reservation.Seats.Count} seats");
         reservation.Seats[0].ForEach(i => Write($"{i}, "));
         WriteLine();
+        List<char> chars = new List<char>();
+        for (int j = 0; j < 10; j++)
+            chars.Add(' ');
+        ModifyCollection(chars);
+        chars.ForEach(i => Write($"{i}, "));
+        WriteLine();
         WriteLine("Press ENTER to exit:");
         ReadLine();
     }
@@ -393,5 +399,10 @@ class Program
         seats = new Dictionary<int, List<int>>();
         seats[0] = new List<int>() { 1, 2, 3, 4 };
         return new Reservation(id, new Dictionary<int, List<int>>(seats));
+    }
+    static void ModifyCollection(List<char> chars)
+    {
+        for (int i = chars.Count / 2; i < chars.Count; i++)
+            chars[i] = 'x';
     }
 }
