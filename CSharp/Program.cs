@@ -212,6 +212,7 @@ class Program
         ModifyCollection(chars);
         chars.ForEach(i => Write($"{i}, "));
         WriteLine();
+        WriteLine($"[A, {(char)('A' + 10)}]");
         WriteLine("Press ENTER to exit:");
         ReadLine();
     }
